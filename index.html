@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Georgia Wedding Photo Wall</title>
+  <style>
+    :root {
+      --paper: #f7f7f4;
+      --ink: #151514;
+      --muted: #77746c;
+      --line: rgba(21, 21, 20, 0.14);
+      --accent: #8b1e16;
+      --shadow: 0 18px 50px rgba(18, 18, 17, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(21, 21, 20, 0.035) 1px, transparent 1px),
+        linear-gradient(180deg, #fbfbf8 0%, var(--paper) 46%, #eceee9 100%);
+      background-size: 72px 72px, auto;
+      font-family: "Avenir Next", "Hiragino Sans GB", "PingFang SC", sans-serif;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    figure {
+      margin: 0;
+    }
+
+    .site {
+      width: min(100% - 36px, 1380px);
+      margin: 0 auto;
+    }
+
+    .hero {
+      min-height: 92vh;
+      display: grid;
+      grid-template-columns: minmax(0, 0.72fr) minmax(320px, 1fr);
+      gap: 26px;
+      align-items: stretch;
+      padding: 24px 0 48px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 10px 0 4px;
+    }
+
+    .kicker {
+      margin: 0;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 9ch;
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(58px, 11vw, 164px);
+      font-weight: 400;
+      line-height: 0.86;
+      letter-spacing: 0;
+    }
+
+    .intro {
+      max-width: 430px;
+      margin: 26px 0 0;
+      color: #3e3c38;
+      font-size: 16px;
+      line-height: 1.8;
+      overflow-wrap: anywhere;
+    }
+
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 44px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .meta strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: none;
+    }
+
+    .hero-frame {
+      position: relative;
+      min-height: 620px;
+      overflow: hidden;
+      background: #111;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-frame img,
+    .tile img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .hero-frame::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 58%, rgba(0, 0, 0, 0.36));
+      pointer-events: none;
+    }
+
+    .hero-label {
+      position: absolute;
+      left: 22px;
+      right: 22px;
+      bottom: 20px;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      color: #fff;
+      font-size: 12px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 54px 0 22px;
+      align-items: end;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(32px, 6vw, 88px);
+      font-weight: 400;
+      letter-spacing: 0;
+      line-height: 0.95;
+    }
+
+    .section-head p {
+      max-width: 360px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+      text-align: right;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-auto-rows: 72px;
+      gap: 12px;
+      padding-bottom: 70px;
+    }
+
+    .tile {
+      position: relative;
+      grid-column: span 3;
+      grid-row: span 5;
+      overflow: hidden;
+      border: 0;
+      padding: 0;
+      color: inherit;
+      background: #ddd;
+      cursor: zoom-in;
+      box-shadow: 0 12px 28px rgba(18, 18, 17, 0.1);
+      isolation: isolate;
+    }
+
+    .tile::after {
+      content: attr(data-title);
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 12px;
+      z-index: 1;
+      color: #fff;
+      opacity: 0;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      transform: translateY(8px);
+      transition: opacity 220ms ease, transform 220ms ease;
+    }
+
+    .tile::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: linear-gradient(180deg, transparent 56%, rgba(0, 0, 0, 0.45));
+      opacity: 0;
+      transition: opacity 220ms ease;
+      pointer-events: none;
+    }
+
+    .tile:hover::before,
+    .tile:hover::after,
+    .tile:focus-visible::before,
+    .tile:focus-visible::after {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .tile img {
+      transition: transform 520ms ease, filter 520ms ease;
+    }
+
+    .tile:hover img,
+    .tile:focus-visible img {
+      transform: scale(1.045);
+      filter: contrast(1.03) saturate(0.98);
+    }
+
+    .wide {
+      grid-column: span 6;
+      grid-row: span 5;
+    }
+
+    .tall {
+      grid-column: span 3;
+      grid-row: span 7;
+    }
+
+    .large {
+      grid-column: span 6;
+      grid-row: span 8;
+    }
+
+    .offset {
+      margin-top: 42px;
+    }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: none;
+      place-items: center;
+      padding: 28px;
+      background: rgba(10, 10, 9, 0.9);
+    }
+
+    .lightbox.is-open {
+      display: grid;
+    }
+
+    .lightbox img {
+      max-width: min(96vw, 1500px);
+      max-height: 86vh;
+      object-fit: contain;
+      box-shadow: 0 22px 70px rgba(0, 0, 0, 0.45);
+    }
+
+    .close {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      width: 42px;
+      height: 42px;
+      border: 1px solid rgba(255, 255, 255, 0.34);
+      border-radius: 999px;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+      cursor: pointer;
+      font-size: 26px;
+      line-height: 1;
+    }
+
+    @media (max-width: 900px) {
+      .site {
+        width: min(100% - 24px, 720px);
+      }
+
+      .hero {
+        min-height: auto;
+        grid-template-columns: 1fr;
+        padding-top: 16px;
+      }
+
+      .hero-copy {
+        min-height: 42vh;
+      }
+
+      .hero-frame {
+        min-height: 62vh;
+      }
+
+      .section-head {
+        display: block;
+      }
+
+      .section-head p {
+        margin-top: 14px;
+        text-align: left;
+      }
+
+      .gallery {
+        grid-template-columns: repeat(6, 1fr);
+        grid-auto-rows: 64px;
+        gap: 10px;
+      }
+
+      .tile,
+      .tall {
+        grid-column: span 3;
+        grid-row: span 5;
+      }
+
+      .wide,
+      .large {
+        grid-column: span 6;
+        grid-row: span 5;
+      }
+
+      .offset {
+        margin-top: 0;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .hero-copy {
+        min-height: 36vh;
+      }
+
+      .intro {
+        max-width: 330px;
+        font-size: 15px;
+      }
+
+      .meta {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-frame {
+        min-height: 58vh;
+      }
+
+      .gallery {
+        display: block;
+      }
+
+      .tile {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 4 / 5;
+        margin-bottom: 10px;
+      }
+
+      .tile.wide {
+        aspect-ratio: 16 / 10;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="site">
+    <section class="hero" aria-label="Georgia wedding editorial">
+      <div class="hero-copy">
+        <p class="kicker">Georgia · Wedding Study</p>
+        <div>
+          <h1>Quiet Vows</h1>
+          <p class="intro">从第比利斯的石阶、地铁、教堂和暮色里，挑出一组更像影像作品集的婚纱照片：克制、留白、光线优先。</p>
+        </div>
+        <div class="meta" aria-label="collection details">
+          <span><strong>15</strong>selected frames</span>
+          <span><strong>Georgia</strong>city / chapel / night</span>
+          <span><strong>Editorial</strong>cinematic wall</span>
+        </div>
+      </div>
+
+      <figure class="hero-frame">
+        <img src="assets/photos/10-cathedral-motion.jpg" alt="新人在教堂前奔跑" />
+        <figcaption class="hero-label">
+          <span>Cathedral Motion</span>
+          <span>Frame 10</span>
+        </figcaption>
+      </figure>
+    </section>
+
+    <section aria-label="精选照片墙">
+      <div class="section-head">
+        <h2>Selected Frames</h2>
+        <p>布局刻意保留节奏差异：远景给呼吸，近景给情绪，夜景收尾。</p>
+      </div>
+
+      <div class="gallery">
+        <button class="tile tall" data-title="Monument Shadow" type="button"><img src="assets/photos/01-monument-shadow.jpg" alt="纪念碑阴影里的新人" /></button>
+        <button class="tile large" data-title="Lake Silhouette" type="button"><img src="assets/photos/03-lake-silhouette.jpg" alt="湖边背影" /></button>
+        <button class="tile tall offset" data-title="Stone Columns" type="button"><img src="assets/photos/02-stone-columns.jpg" alt="石柱和白裙" /></button>
+        <button class="tile wide" data-title="Open Field" type="button"><img src="assets/photos/04-open-field.jpg" alt="草地远景" /></button>
+        <button class="tile tall" data-title="Lakeside Frame" type="button"><img src="assets/photos/05-lakeside-frame.jpg" alt="湖边树影下的新人" /></button>
+        <button class="tile tall" data-title="Red Berries" type="button"><img src="assets/photos/06-red-berries.jpg" alt="红色果实前的新人" /></button>
+        <button class="tile tall offset" data-title="Archway" type="button"><img src="assets/photos/07-archway.jpg" alt="拱门下的新人" /></button>
+        <button class="tile tall" data-title="Metro Red" type="button"><img src="assets/photos/08-metro-red.jpg" alt="红色地铁旁的新人" /></button>
+        <button class="tile tall" data-title="Metro Glow" type="button"><img src="assets/photos/09-metro-glow.jpg" alt="地铁通道里的新人" /></button>
+        <button class="tile tall offset" data-title="Cathedral Steps" type="button"><img src="assets/photos/11-cathedral-steps.jpg" alt="教堂台阶上的新人" /></button>
+        <button class="tile tall" data-title="Garden Solo" type="button"><img src="assets/photos/12-garden-solo.jpg" alt="花园里的新娘" /></button>
+        <button class="tile tall" data-title="Veil Portrait" type="button"><img src="assets/photos/13-veil-portrait.jpg" alt="逆光头纱肖像" /></button>
+        <button class="tile tall" data-title="Evening City" type="button"><img src="assets/photos/14-evening-city.jpg" alt="城市夜景前的新人" /></button>
+        <button class="tile tall offset" data-title="Staircase Gold" type="button"><img src="assets/photos/15-staircase-gold.jpg" alt="金色楼梯里的新人" /></button>
+      </div>
+    </section>
+  </main>
+
+  <div class="lightbox" aria-hidden="true">
+    <button class="close" type="button" aria-label="关闭预览">&times;</button>
+    <img alt="" />
+  </div>
+
+  <script>
+    const lightbox = document.querySelector(".lightbox");
+    const lightboxImage = lightbox.querySelector("img");
+    const closeButton = document.querySelector(".close");
+
+    document.querySelectorAll(".tile").forEach((tile) => {
+      tile.addEventListener("click", () => {
+        const image = tile.querySelector("img");
+        lightboxImage.src = image.src;
+        lightboxImage.alt = image.alt;
+        lightbox.classList.add("is-open");
+        lightbox.setAttribute("aria-hidden", "false");
+      });
+    });
+
+    function closeLightbox() {
+      lightbox.classList.remove("is-open");
+      lightbox.setAttribute("aria-hidden", "true");
+      lightboxImage.removeAttribute("src");
+    }
+
+    closeButton.addEventListener("click", closeLightbox);
+    lightbox.addEventListener("click", (event) => {
+      if (event.target === lightbox) closeLightbox();
+    });
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && lightbox.classList.contains("is-open")) closeLightbox();
+    });
+  </script>
+</body>
+</html>
